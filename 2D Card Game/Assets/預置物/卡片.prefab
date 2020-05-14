@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 5893778514472606030}
   - component: {fileID: 5893778514472606031}
   m_Layer: 5
-  m_Name: "\u5361\u7247\u63CF\u8FF0"
+  m_Name: "\u63CF\u8FF0"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -184,7 +184,7 @@ GameObject:
   - component: {fileID: 5893778514736458000}
   - component: {fileID: 5893778514736458001}
   m_Layer: 5
-  m_Name: "\u5361\u7247\u540D\u7A31"
+  m_Name: "\u540D\u7A31"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -600,7 +600,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7666323, g: 0.9716981, b: 0.068752214, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
