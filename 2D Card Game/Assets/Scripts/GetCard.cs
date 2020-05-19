@@ -3,8 +3,12 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 using System.Collections;
 
+/// <summary>
+/// 取得卡牌資訊
+/// </summary>
 public class GetCard : MonoBehaviour
 {
+	public static GetCard instance;
 	public CardData[] cards;   //卡牌
 	[Header("卡牌物件")]
 	public GameObject cardobject;    
@@ -52,6 +56,7 @@ public class GetCard : MonoBehaviour
 
 	private void Awake()
 	{
+		instance = this;
 		loadingPanel = GameObject.Find("載入畫面").GetComponent<CanvasGroup>();
 		loading = GameObject.Find("進度條").GetComponent<Image>();
 	}
@@ -64,17 +69,8 @@ public class GetCard : MonoBehaviour
 	/// 卡片資料
 	/// </summary>
 	/// 序列化:讓資料可以顯示屬性面板上
-	[System.Serializable]
-	public class CardData
-	{
-		public int index;
-		public string name;
-		public int cost;
-		public int hp;
-		public int attack;
-		public string description;
-		public string file;
-	}
+	
+
 
 	private void CreateCard()
 	{
@@ -88,6 +84,8 @@ public class GetCard : MonoBehaviour
 			temp.Find("血量").GetComponent<Text>().text = card.hp.ToString();
 			temp.Find("攻擊").GetComponent<Text>().text = card.attack.ToString();
 			temp.Find("遮色片").Find("卡圖").GetComponent<Image>().sprite = Resources.Load<Sprite>(card.file);
+
+			temp.gameObject.AddComponent<BookCard>().index = card.index;
 		}
 	}
 
@@ -105,4 +103,16 @@ public class GetCard : MonoBehaviour
 			public T[] Items;
 		}
 	}
+}
+
+[System.Serializable]
+public class CardData
+{
+	public int index;
+	public string name;
+	public int cost;
+	public int hp;
+	public int attack;
+	public string description;
+	public string file;
 }
