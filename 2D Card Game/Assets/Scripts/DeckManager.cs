@@ -14,11 +14,17 @@ public class DeckManager : MonoBehaviour
 	public Transform deckcontent;
 	[Header("卡牌數量")]
 	public Text Deckcount;
+	[Header("開始按鈕")]
+	public Button btnstart;
+
+	public Transform content;
 
 	private void Awake()
 	{
-		//設為這個物件
-		instance = this;
+		
+		instance = this; //設為這個物件
+		btnstart.interactable = false;
+		btnstart.onClick.AddListener(StartBattle);
 	}
 
 	public void AddCard(int index)
@@ -39,6 +45,7 @@ public class DeckManager : MonoBehaviour
 				if (sameCard.Count < 1)
 				{
 					temp = Instantiate(deckinfo, deckcontent).transform;
+					temp.gameObject.AddComponent<DeckObject>().index = card.index;
 					temp.name = "牌組卡牌資訊 : " + card.name;
 				}
 				else
@@ -52,11 +59,73 @@ public class DeckManager : MonoBehaviour
 				temp.Find("數量").GetComponent<Text>().text = (sameCard.Count+1).ToString();
 			}
 		}
+		if (Deck.Count == 30)
+		{
+			btnstart.interactable = true;
+		}
 	}
 
-	public void DeleteCard()
+	public void DeleteCard(int index)
 	{
+		//選取的卡牌
+		CardData card = GetCard.instance.cards[index - 1];
+		//相同卡牌 = 牌組.尋找全部( 卡牌=>卡牌.等於(目前點選的卡牌資訊))
+		List<CardData> sameCard = Deck.FindAll(c => c.Equals(card));
+		//移除卡牌
+		Deck.Remove(card);
 
+		Transform temp = GameObject.Find("牌組卡牌資訊 : " + card.name).transform;
+		//相同卡牌>1
+		if (sameCard.Count  > 1)
+		{
+			temp.Find("數量").GetComponent<Text>().text = (sameCard.Count-1).ToString();
+		}
+		else
+		{
+			Destroy(temp.gameObject);
+		}
+		Deckcount.text = ("卡牌數量 " + Deck.Count + "/30");
+		btnstart.interactable = false;
 	}
 
+	/// <summary>
+	/// 建立卡牌在洗牌區
+	/// </summary>
+	private void CreateCard()
+	{
+		for (int i = 0; i < Deck.Count; i++)
+		{
+			Transform temp = Instantiate(GetCard.instance.cardobject, content).transform;
+			CardData card = Deck[i];
+			temp.Find("名稱").GetComponent<Text>().text = card.name.ToString();
+			temp.Find("描述").GetComponent<Text>().text = card.description.ToString();
+			temp.Find("消耗").GetComponent<Text>().text = card.cost.ToString();
+			temp.Find("血量").GetComponent<Text>().text = card.hp.ToString();
+			temp.Find("攻擊").GetComponent<Text>().text = card.attack.ToString();
+			temp.Find("遮色片").Find("卡圖").GetComponent<Image>().sprite = Resources.Load<Sprite>(card.file);
+
+			temp.gameObject.AddComponent<BookCard>().index = card.index;
+		}
+	}
+
+	/// <summary>
+	/// 洗牌
+	/// </summary>
+	private void Shuffle()
+	{
+		for (int i = 0; i < Deck.Count; i++)
+		{
+			CardData original = Deck[i];
+			int r =  Random.Range(0, Deck.Count);
+			Deck[i] = Deck[r];
+			Deck[r] = original;
+
+		}
+		CreateCard();
+	}
+
+	private void StartBattle()
+	{
+		Shuffle();
+	}
 }
