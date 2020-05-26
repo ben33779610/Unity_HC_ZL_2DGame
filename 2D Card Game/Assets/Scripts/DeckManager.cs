@@ -2,9 +2,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 卡牌管理器
+/// </summary>
 public class DeckManager : MonoBehaviour
 {
 	//將物件新增一個靜態物件
+	/// <summary>
+	/// 實體化DeckManager
+	/// </summary>
 	public static DeckManager instance;
 	public List<CardData> Deck = new List<CardData>();
 
@@ -16,8 +22,9 @@ public class DeckManager : MonoBehaviour
 	public Text Deckcount;
 	[Header("開始按鈕")]
 	public Button btnstart;
-
+	[Header("牌組內容")]
 	public Transform content;
+
 
 	private void Awake()
 	{
@@ -27,6 +34,9 @@ public class DeckManager : MonoBehaviour
 		btnstart.onClick.AddListener(StartBattle);
 	}
 
+	/// <summary>
+	/// 新增卡牌
+	/// </summary>
 	public void AddCard(int index)
 	{
 		
@@ -65,6 +75,9 @@ public class DeckManager : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// 刪除卡牌
+	/// </summary>
 	public void DeleteCard(int index)
 	{
 		//選取的卡牌
@@ -126,6 +139,10 @@ public class DeckManager : MonoBehaviour
 
 	private void StartBattle()
 	{
+		
 		Shuffle();
+		BattleManager.instance.StartBattle();
 	}
+
+
 }
