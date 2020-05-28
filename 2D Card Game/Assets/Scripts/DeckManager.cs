@@ -12,8 +12,10 @@ public class DeckManager : MonoBehaviour
 	/// 實體化DeckManager
 	/// </summary>
 	public static DeckManager instance;
+	[Header("牌組資料")]
 	public List<CardData> Deck = new List<CardData>();
-
+	[Header("牌組遊戲物件")]
+	public List<GameObject> Deckgameobject = new List<GameObject>();
 	[Header("牌組資訊")]
 	public GameObject deckinfo;
 	[Header("套牌內容")]
@@ -22,7 +24,7 @@ public class DeckManager : MonoBehaviour
 	public Text Deckcount;
 	[Header("開始按鈕")]
 	public Button btnstart;
-	[Header("牌組內容")]
+	[Header("洗牌後牌組內容")]
 	public Transform content;
 
 
@@ -118,6 +120,7 @@ public class DeckManager : MonoBehaviour
 			temp.Find("遮色片").Find("卡圖").GetComponent<Image>().sprite = Resources.Load<Sprite>(card.file);
 
 			temp.gameObject.AddComponent<BookCard>().index = card.index;
+			Deckgameobject.Add( temp.gameObject );
 		}
 	}
 
