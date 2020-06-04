@@ -147,5 +147,22 @@ public class DeckManager : MonoBehaviour
 		BattleManager.instance.StartBattle();
 	}
 
+	private void Update()
+	{
+		ChooseCard();
+	}
+	private void ChooseCard()
+	{
+		if (Input.GetKeyDown(KeyCode.Alpha1))
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 1; j <= 10; j++)
+				{
+					AddCard(j);
+				}
+			}
+		}
+	}
 
 }

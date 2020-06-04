@@ -18,6 +18,8 @@ public class BattleManager : MonoBehaviour
 	public GameObject gameview;
 	[Header("是否先攻")]
 	public bool firstattack;
+	[Header("水晶")]
+	public int crystal = 1;
 
 	private Transform canvas;
 	private Transform hand;
