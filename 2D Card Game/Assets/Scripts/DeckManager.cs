@@ -149,6 +149,7 @@ public class DeckManager : MonoBehaviour
 
 	private void Update()
 	{
+		
 		ChooseCard();
 	}
 	private void ChooseCard()

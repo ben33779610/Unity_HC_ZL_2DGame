@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
@@ -18,8 +19,17 @@ public class BattleManager : MonoBehaviour
 	public GameObject gameview;
 	[Header("是否先攻")]
 	public bool firstattack;
-	[Header("水晶")]
-	public int crystal = 1;
+	[Header("水晶數量")]
+	public int crystal ;
+	[Header("水晶數量介面")]
+	public Text crstaltext;
+	[Header("水晶物件"),Tooltip("水晶圖片,用來顯示的10張")]
+	public GameObject[] crystalobject;
+	[Header("擲硬幣畫面")]
+	public GameObject coinview;
+
+	private int crystalTotal;
+	private bool myturn;
 
 	private Transform canvas;
 	private Transform hand;
@@ -29,12 +39,32 @@ public class BattleManager : MonoBehaviour
 		instance = this;
 		canvas = GameObject.Find("畫布").GetComponent<Transform>();
 		hand = GameObject.Find("手牌區域").GetComponent<Transform>();
+		
 	}
 
 	public void StartBattle()
 	{
 		gameview.SetActive(true); //顯示遊戲畫面
 		ThrowCoin();
+		
+	}
+	/// <summary>
+	/// 結束回合
+	/// </summary>
+	public void EndTurn()
+	{
+		myturn = false;
+	}
+	/// <summary>
+	/// 開始回合
+	/// </summary>
+	public void StartTurn()
+	{
+		myturn = true;
+		crystalTotal++;
+		crystal = crystalTotal;
+		Crystal();
+		StartCoroutine(GetCard(1));
 		
 	}
 
@@ -47,7 +77,7 @@ public class BattleManager : MonoBehaviour
 		coin.maxAngularVelocity = 50;
 		coin.AddTorque(Random.Range(50, 120), 0, 0);
 
-		CheckCoin();
+		Invoke("CheckCoin",2);
 		
 
 	}
@@ -59,16 +89,31 @@ public class BattleManager : MonoBehaviour
 	private void CheckCoin()
 	{
 		
+
 		firstattack = coin.transform.GetChild(0).position.y > 0.1 ? true : false;
 
-		StartCoroutine(GetCard(3));
+		
+		coinview.SetActive(false);
+
+		
+		int card = 4;
+		
+		if (firstattack)
+		{
+			crystalTotal = 1;
+			crystal = crystalTotal;
+			card = 3;
+		}
+		
+		Crystal();
+		StartCoroutine(GetCard(card));
 	}
 	/// <summary>
 	/// 取得手牌
 	/// </summary>
 	private IEnumerator GetCard(int count)
 	{
-		yield return new WaitForSeconds(3);
+		yield return new WaitForSeconds(1);
 		for (int i = 0; i < count; i++)
 		{
 			battleDeck.Add(DeckManager.instance.Deck[0]);
@@ -106,4 +151,31 @@ public class BattleManager : MonoBehaviour
 		card.SetParent(hand);
 		card.gameObject.AddComponent<HandCard>();
 	}
+
+	/// <summary>
+	/// 回合開始時更新水晶
+	/// </summary>
+	private void Crystal()
+	{
+		for (int i = 0; i < crystal; i++)
+		{
+			crystalobject[i].SetActive(true);
+		}
+		crstaltext.text = crystal + "/ 10";
+	}
+
+	/// <summary>
+	/// 使用卡牌時更新水晶數量
+	/// </summary>
+	public void UpdateCrystal()
+	{
+		for (int i = 0; i < crystalobject.Length; i++)
+		{
+			if (i < crystal) continue;      //如果i < 水晶數量  就跳過此次
+
+			crystalobject[i].SetActive(false);
+		}
+		crstaltext.text = crystal + "/ 10";
+	}
+
 }

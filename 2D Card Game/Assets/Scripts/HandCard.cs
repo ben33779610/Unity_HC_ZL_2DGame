@@ -57,6 +57,7 @@ public class HandCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 			inscene = true;
 			transform.SetParent(scene);
 			BattleManager.instance.crystal -= crystalcost;
+			BattleManager.instance.UpdateCrystal();
 			print(BattleManager.instance.crystal);
 			return true;
 		}
