@@ -117,7 +117,7 @@ public class DeckManager : MonoBehaviour
 			temp.Find("消耗").GetComponent<Text>().text = card.cost.ToString();
 			temp.Find("血量").GetComponent<Text>().text = card.hp.ToString();
 			temp.Find("攻擊").GetComponent<Text>().text = card.attack.ToString();
-			temp.Find("遮色片").Find("卡圖").GetComponent<Image>().sprite = Resources.Load<Sprite>(card.file);
+			temp.Find("卡圖").GetComponent<Image>().sprite = Resources.Load<Sprite>(card.file);
 
 			temp.gameObject.AddComponent<BookCard>().index = card.index;
 			Deckgameobject.Add( temp.gameObject );

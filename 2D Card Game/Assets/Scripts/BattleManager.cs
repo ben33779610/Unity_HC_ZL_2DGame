@@ -34,6 +34,8 @@ public class BattleManager : MonoBehaviour
 	private Transform canvas;
 	private Transform hand;
 
+	public int handcardcount; //手牌數量
+
 	private void Awake()
 	{
 		instance = this;
@@ -62,6 +64,7 @@ public class BattleManager : MonoBehaviour
 	{
 		myturn = true;
 		crystalTotal++;
+		crystalTotal = Mathf.Clamp(crystalTotal, 1, 10);
 		crystal = crystalTotal;
 		Crystal();
 		StartCoroutine(GetCard(1));
@@ -139,17 +142,48 @@ public class BattleManager : MonoBehaviour
 			yield return null;
 		}
 		
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(0.2f);
 
-		card.localScale = Vector3.one * 0.5f;
-		while (card.anchoredPosition.y > -450)
+		//爆牌
+		if (handcardcount == 10)
 		{
-			card.anchoredPosition = Vector2.Lerp(card.anchoredPosition, new Vector2(0, -451), 0.5f * Time.deltaTime * 50);
-			yield return null;
-		}
+			card.GetChild(1).GetComponent<Image>().material = Instantiate(card.GetChild(1).GetComponent<Image>().material);
+			card.GetChild(0).GetComponent<Image>().material = Instantiate(card.GetChild(0).GetComponent<Image>().material);
 
-		card.SetParent(hand);
-		card.gameObject.AddComponent<HandCard>();
+			Material m = card.GetChild(1).GetComponent<Image>().material;
+			Material m0 = card.GetChild(0).GetComponent<Image>().material;
+			m.SetFloat("switch",1);
+			m0.SetFloat("switch",1);
+			float a = 0;
+
+			Text[] texts = card.GetComponentsInChildren<Text>();
+			for (int i = 0; i < texts.Length; i++) texts[i].enabled = false;
+
+			while (m.GetFloat("alphaclip") < 4)
+			{
+				a += 0.1f;
+				m.SetFloat("alphaclip", a);
+				m0.SetFloat("alphaclip", a);
+				yield return null;
+			}
+			Destroy(card.gameObject);
+			battleDeck.RemoveAt(battleDeck.Count - 1);
+			Handgameobject.RemoveAt(battleDeck.Count - 1);
+
+		}
+		else
+		{
+			card.localScale = Vector3.one * 0.5f;
+			while (card.anchoredPosition.y > -450)
+			{
+				card.anchoredPosition = Vector2.Lerp(card.anchoredPosition, new Vector2(0, -451), 0.5f * Time.deltaTime * 50);
+				yield return null;
+			}
+
+			card.SetParent(hand);
+			card.gameObject.AddComponent<HandCard>();
+			handcardcount++;
+		}
 	}
 
 	/// <summary>
