@@ -28,7 +28,7 @@ public class DeckManager : MonoBehaviour
 	public Transform content;
 
 
-	private void Awake()
+	protected virtual void Awake()
 	{
 		
 		instance = this; //設為這個物件
@@ -147,21 +147,20 @@ public class DeckManager : MonoBehaviour
 		BattleManager.instance.StartBattle();
 	}
 
-	private void Update()
+	protected virtual void Update()
 	{
 		
-		ChooseCard();
+		if(Input.GetKeyDown(KeyCode.Alpha1)) ChooseCard();
 	}
-	private void ChooseCard()
+	protected virtual void ChooseCard()
 	{
-		if (Input.GetKeyDown(KeyCode.Alpha1))
+		while (Deck.Count < 30)
 		{
-			for (int i = 0; i < 3; i++)
+			int r =Random.Range(0, GetCard.instance.cards.Length)+1;
+			List<CardData> sameCard = Deck.FindAll(c => c.Equals(GetCard.instance.cards[r - 1]));
+			if (sameCard.Count < 3)
 			{
-				for (int j = 1; j <= 10; j++)
-				{
-					AddCard(j);
-				}
+				AddCard(r);
 			}
 		}
 	}

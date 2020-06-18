@@ -28,7 +28,7 @@ public class BattleManager : MonoBehaviour
 	[Header("擲硬幣畫面")]
 	public GameObject coinview;
 
-	private int crystalTotal;
+	protected int crystalTotal;
 	private bool myturn;
 
 	private Transform canvas;
@@ -36,7 +36,7 @@ public class BattleManager : MonoBehaviour
 
 	public int handcardcount; //手牌數量
 
-	private void Awake()
+	protected virtual void Awake()
 	{
 		instance = this;
 		canvas = GameObject.Find("畫布").GetComponent<Transform>();
@@ -67,7 +67,7 @@ public class BattleManager : MonoBehaviour
 		crystalTotal = Mathf.Clamp(crystalTotal, 1, 10);
 		crystal = crystalTotal;
 		Crystal();
-		StartCoroutine(GetCard(1));
+		StartCoroutine(GetCard(1,DeckManager.instance,-200,-275));
 		
 	}
 
@@ -81,7 +81,7 @@ public class BattleManager : MonoBehaviour
 		coin.AddTorque(Random.Range(50, 120), 0, 0);
 
 		Invoke("CheckCoin",2);
-		
+		NPCbattleManager.npcinstance.Invoke("CheckCoin", 2);
 
 	}
 	/// <summary>
@@ -89,7 +89,7 @@ public class BattleManager : MonoBehaviour
 	/// rotation.x =0 正面
 	/// rotation.x = 1 || -1 反面
 	/// </summary>
-	private void CheckCoin()
+	protected virtual void CheckCoin()
 	{
 		
 
@@ -109,12 +109,12 @@ public class BattleManager : MonoBehaviour
 		}
 		
 		Crystal();
-		StartCoroutine(GetCard(card));
+		StartCoroutine(GetCard(card,DeckManager.instance,-200,-275));
 	}
 	/// <summary>
 	/// 取得手牌
 	/// </summary>
-	private IEnumerator GetCard(int count)
+	protected IEnumerator GetCard(int count,DeckManager deck, int rightY, int handY)
 	{
 		yield return new WaitForSeconds(1);
 		for (int i = 0; i < count; i++)
@@ -123,12 +123,12 @@ public class BattleManager : MonoBehaviour
 			DeckManager.instance.Deck.RemoveAt(0);
 			Handgameobject.Add(DeckManager.instance.Deckgameobject[0]);
 			DeckManager.instance.Deckgameobject.RemoveAt(0);
-			yield return StartCoroutine(MoveCard());
+			yield return StartCoroutine(MoveCard(rightY,handY));
 
 		}
 	}
 
-	private IEnumerator MoveCard()
+	private IEnumerator MoveCard(int rightY, int handY)
 	{
 		RectTransform card = Handgameobject[Handgameobject.Count-1].GetComponent<RectTransform>();
 
@@ -174,8 +174,13 @@ public class BattleManager : MonoBehaviour
 		else
 		{
 			card.localScale = Vector3.one * 0.5f;
+			bool con = true;
+
 			while (card.anchoredPosition.y > -450)
 			{
+				if (handY < 0) con = card.anchoredPosition.y > handY + 1;
+				else con = card.anchoredPosition.y < handY - 1;
+
 				card.anchoredPosition = Vector2.Lerp(card.anchoredPosition, new Vector2(0, -451), 0.5f * Time.deltaTime * 50);
 				yield return null;
 			}
@@ -189,7 +194,7 @@ public class BattleManager : MonoBehaviour
 	/// <summary>
 	/// 回合開始時更新水晶
 	/// </summary>
-	private void Crystal()
+	protected void Crystal()
 	{
 		for (int i = 0; i < crystal; i++)
 		{
