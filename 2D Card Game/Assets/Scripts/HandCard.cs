@@ -4,10 +4,12 @@ using UnityEngine.UI;
 
 public class HandCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-	private Vector3 origin;
+	public Transform scene; //場地
+	public string sceneName;//場地名稱
+	public float pos;		//條件位置
 
+	private Vector3 origin;
 	private RectTransform rect;
-	private Transform scene;
 
 	private bool inscene;
 	private int crystalcost;
@@ -16,7 +18,7 @@ public class HandCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 	{
 		rect = GetComponent<RectTransform>();
 
-		scene = GameObject.Find("我方場地").transform;
+		scene = GameObject.Find(sceneName).transform;
 
 		crystalcost = int.Parse(transform.Find("消耗").GetComponent<Text>().text);
 		
@@ -39,9 +41,14 @@ public class HandCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
 	public void OnEndDrag(PointerEventData eventData)
 	{
-		if (rect.anchoredPosition.y >= 70 && CheckCrystal())
-		{
+		bool con;
 
+		if (sceneName.Contains("NPC")) con = rect.anchoredPosition.y <= pos;
+		else con = rect.anchoredPosition.y >= pos;
+
+		if (con )
+		{
+			CheckCrystal();
 		}
 		else
 		{
@@ -50,7 +57,7 @@ public class HandCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 		}
 	}
 
-	private bool CheckCrystal()
+	private void CheckCrystal()
 	{
 		if (crystalcost <= BattleManager.instance.crystal)
 		{
@@ -59,9 +66,14 @@ public class HandCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 			BattleManager.instance.crystal -= crystalcost;
 			BattleManager.instance.UpdateCrystal();
 			print(BattleManager.instance.crystal);
-			return true;
+			
 		}
 		else
-			return false;
+		{
+			//回到原始座標
+			transform.position = origin;
+		}
+
+
 	}
 }

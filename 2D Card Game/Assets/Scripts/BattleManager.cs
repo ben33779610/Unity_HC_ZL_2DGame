@@ -27,21 +27,25 @@ public class BattleManager : MonoBehaviour
 	public GameObject[] crystalobject;
 	[Header("擲硬幣畫面")]
 	public GameObject coinview;
+	public int handcardcount; //手牌數量
 
-	protected int crystalTotal;
 	private bool myturn;
 
 	private Transform canvas;
-	private Transform hand;
+	public Transform hand;
 
-	public int handcardcount; //手牌數量
+	protected int crystalTotal;
+	protected string  sceneName;
+	protected float pos;
 
-	protected virtual void Awake()
+	protected virtual void Start()
 	{
 		instance = this;
 		canvas = GameObject.Find("畫布").GetComponent<Transform>();
-		hand = GameObject.Find("手牌區域").GetComponent<Transform>();
-		
+		sceneName = "我方場地";
+		pos = 90;
+
+
 	}
 
 	public void StartBattle()
@@ -119,10 +123,10 @@ public class BattleManager : MonoBehaviour
 		yield return new WaitForSeconds(1);
 		for (int i = 0; i < count; i++)
 		{
-			battleDeck.Add(DeckManager.instance.Deck[0]);
-			DeckManager.instance.Deck.RemoveAt(0);
-			Handgameobject.Add(DeckManager.instance.Deckgameobject[0]);
-			DeckManager.instance.Deckgameobject.RemoveAt(0);
+			battleDeck.Add(deck.Deck[0]);
+			deck.Deck.RemoveAt(0);
+			Handgameobject.Add(deck.Deckgameobject[0]);
+			deck.Deckgameobject.RemoveAt(0);
 			yield return StartCoroutine(MoveCard(rightY,handY));
 
 		}
@@ -138,7 +142,7 @@ public class BattleManager : MonoBehaviour
 		card.localScale = Vector3.one * 1.5f;
 		while (card.anchoredPosition.x > 501)
 		{
-			card.anchoredPosition = Vector2.Lerp(card.anchoredPosition, new Vector2(500, 0), 0.5f * Time.deltaTime * 50);
+			card.anchoredPosition = Vector2.Lerp(card.anchoredPosition, new Vector2(500, rightY), 0.5f * Time.deltaTime * 50);
 			yield return null;
 		}
 		
@@ -173,20 +177,23 @@ public class BattleManager : MonoBehaviour
 		}
 		else
 		{
+			
 			card.localScale = Vector3.one * 0.5f;
 			bool con = true;
 
-			while (card.anchoredPosition.y > -450)
+			while (con)
 			{
 				if (handY < 0) con = card.anchoredPosition.y > handY + 1;
 				else con = card.anchoredPosition.y < handY - 1;
 
-				card.anchoredPosition = Vector2.Lerp(card.anchoredPosition, new Vector2(0, -451), 0.5f * Time.deltaTime * 50);
+				card.anchoredPosition = Vector2.Lerp(card.anchoredPosition, new Vector2(0, handY), 0.5f * Time.deltaTime * 50);
 				yield return null;
 			}
 
 			card.SetParent(hand);
 			card.gameObject.AddComponent<HandCard>();
+			card.gameObject.GetComponent<HandCard>().sceneName = sceneName;
+			card.gameObject.GetComponent<HandCard>().pos = pos;
 			handcardcount++;
 		}
 	}

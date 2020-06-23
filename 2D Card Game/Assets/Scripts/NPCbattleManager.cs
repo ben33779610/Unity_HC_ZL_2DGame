@@ -2,9 +2,11 @@
 {
 	public static NPCbattleManager npcinstance;
 
-	protected override void Awake()
+	protected override void Start()
 	{
 		npcinstance = this;
+		sceneName = "NPC場地";
+		pos = -260;
 	}
 
 
@@ -25,7 +27,7 @@
 		}
 
 		Crystal();
-		StartCoroutine(GetCard(card,NPCdeckmanager.npcinstance,200,275));
+		StartCoroutine(GetCard(card,NPCdeckmanager.npcinstance,-126,-70));
 	}
 
 }
