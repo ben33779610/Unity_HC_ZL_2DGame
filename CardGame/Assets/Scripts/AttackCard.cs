@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI.Extensions;        // 引用 UI 額外功能 API
 
@@ -9,6 +10,8 @@ public class AttackCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     private Transform arrow;        //箭頭
     private Vector2 posBegin,posEnd; //開始拖拉為志,結束拖拉位置
     private bool canatk;
+    private static Transform parent;
+    private static Transform target;
 
     private void Awake()
     {
@@ -53,10 +56,29 @@ public class AttackCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     public void OnPointerEnter(PointerEventData eventData)
     {
         canatk = true;
+        parent = transform.parent;
+        target = transform;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         canatk = false;
+        parent = null;
+        target = null;
+    }
+
+    private IEnumerator Attack()
+    {
+        transform.parent.SetAsLastSibling();    //變形.付物件.設為最後一個子物件
+
+        Vector3 pos = transform.position; //原始位置
+
+        while (transform.position.y != target.position.y)
+        {
+            transform.position = Vector3.Lerp(transform.position, target.position, 0.9f * Time.deltaTime * 30);
+            yield return new WaitForSeconds(0.5f); 
+        }
+
+        transform.position = pos;       //回到原始位置
     }
 }
